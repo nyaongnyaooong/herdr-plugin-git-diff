@@ -1,42 +1,39 @@
 #!/bin/sh
-# Toggle the diff pane next to the focused pane: close it if open, else open it.
+# Toggle the diff tab: open it from a work tab, or close it and go back to that tab.
 set -eu
 
 herdr=${HERDR_BIN_PATH:-herdr}
-state="$HERDR_PLUGIN_STATE_DIR/pane-${HERDR_TAB_ID:-default}"
+dir=$HERDR_PLUGIN_STATE_DIR
 
-# State files hold "<pane_id>" for a split, "<pane_id> <tab_id>" for a diff tab.
-# A diff tab is closed whole: other plugins (ai-usage) add their own panes to new tabs.
+# pane-<origin tab> holds "<diff pane> <diff tab>" while the diff tab is open.
+# The tab is closed whole: other plugins (ai-usage) add their own panes to new tabs.
 close_diff() {
+    origin=${1##*/pane-}
+    read -r id tab <"$1" || true
     rm -f "$1"
-    if [ -n "${3:-}" ]; then
-        "$herdr" tab close "$3" >/dev/null
+    if [ -n "${tab:-}" ]; then
+        "$herdr" tab close "$tab" >/dev/null 2>&1 || true
     else
-        "$herdr" plugin pane close "$2" >/dev/null
+        # State written by the old split-pane version.
+        "$herdr" plugin pane close "$id" >/dev/null 2>&1 || true
     fi
+    "$herdr" tab focus "$origin" >/dev/null 2>&1 || true
 }
 
-# Pressed inside the diff pane itself (e.g. in its own tab): close it.
-for f in "$HERDR_PLUGIN_STATE_DIR"/pane-*; do
+# Pressed inside the diff tab, or in a work tab whose diff tab is still open.
+for f in "$dir"/pane-*; do
     [ -f "$f" ] || continue
     read -r id tab <"$f" || true
-    if [ "$id" = "$HERDR_PANE_ID" ]; then
-        close_diff "$f" "$id" "${tab:-}"
+    if [ "$id" = "$HERDR_PANE_ID" ] || [ "${tab:-}" = "${HERDR_TAB_ID:-}" ] ||
+        { [ "$f" = "$dir/pane-${HERDR_TAB_ID:-}" ] && "$herdr" pane get "$id" >/dev/null 2>&1; }; then
+        close_diff "$f"
         exit 0
     fi
 done
-
-if [ -f "$state" ]; then
-    read -r id tab <"$state" || true
-    if "$herdr" pane get "$id" >/dev/null 2>&1; then
-        close_diff "$state" "$id" "${tab:-}"
-        exit 0
-    fi
-    rm -f "$state"
-fi
+rm -f "$dir/pane-${HERDR_TAB_ID:-default}"
 
 cwd=$("$herdr" pane get "$HERDR_PANE_ID" | jq -r '.result.pane.foreground_cwd // .result.pane.cwd')
-repos="$HERDR_PLUGIN_STATE_DIR/repos-${HERDR_TAB_ID:-default}"
+repos="$dir/repos-${HERDR_TAB_ID:-default}"
 if root=$(git -C "$cwd" rev-parse --show-toplevel 2>/dev/null); then
     printf '%s\n' "$root" >"$repos"
 else
@@ -55,17 +52,6 @@ else
 fi
 
 # No --cwd: the manifest's relative pane command resolves against it.
-# A tab already split left/right gets the diff in a new tab instead.
-if "$herdr" pane layout --pane "$HERDR_PANE_ID" |
-    jq -e '.result.layout.splits | any(.direction == "right")' >/dev/null; then
-    "$herdr" plugin pane open --plugin "$HERDR_PLUGIN_ID" --entrypoint diff --placement tab \
-        --workspace "$HERDR_WORKSPACE_ID" --env "GIT_DIFF_REPOS=$repos" --focus |
-        jq -r '.result.plugin_pane.pane | "\(.pane_id) \(.tab_id)"' >"$state"
-    exit 0
-fi
-
-"$herdr" plugin pane open --plugin "$HERDR_PLUGIN_ID" --entrypoint diff --placement split \
-    --target-pane "$HERDR_PANE_ID" --direction right --env "GIT_DIFF_REPOS=$repos" --no-focus |
-    jq -r '.result.plugin_pane.pane.pane_id' >"$state"
-# New splits start at 0.5; shrink the Claude pane to 0.25 so it is 1:3 with the diff.
-"$herdr" pane resize --pane "$HERDR_PANE_ID" --direction left --amount 0.25 >/dev/null
+"$herdr" plugin pane open --plugin "$HERDR_PLUGIN_ID" --entrypoint diff --placement tab \
+    --workspace "$HERDR_WORKSPACE_ID" --env "GIT_DIFF_REPOS=$repos" --focus |
+    jq -r '.result.plugin_pane.pane | "\(.pane_id) \(.tab_id)"' >"$dir/pane-${HERDR_TAB_ID:-default}"
