@@ -74,7 +74,6 @@ local groups = {
   diffAdded = { fg = c.hint },
   diffRemoved = { fg = c.error },
   diffChanged = { fg = c.info },
-  DiffviewDiffAddAsDelete = { bg = "#4a2421" },
   DiffviewDiffDeleteDim = { fg = "#5a5a5a" },
   DiffviewFilePanelTitle = { fg = c.fg_bright, bold = true },
   DiffviewFilePanelCounter = { fg = c.keyword },

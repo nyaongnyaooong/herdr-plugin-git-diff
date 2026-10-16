@@ -18,7 +18,13 @@ require("lazy").setup({
     {
       "sindrets/diffview.nvim",
       cmd = { "DiffviewOpen", "DiffviewRefresh" },
-      opts = { use_icons = false },
+      -- enhanced_diff_hl: lines only in the old side show as deleted (red), not added.
+      opts = { use_icons = false, enhanced_diff_hl = true },
+      config = function(_, opts)
+        require("diffview").setup(opts)
+        -- diffview's setup resets this group, so set it after (IntelliJ red-tinted bg).
+        vim.api.nvim_set_hl(0, "DiffviewDiffAddAsDelete", { bg = "#4a2421" })
+      end,
       keys = { { "q", "<cmd>qa<cr>", desc = "Quit" } },
     },
   },
