@@ -51,7 +51,17 @@ else
     fi
 fi
 
+count=$(wc -l <"$repos" | tr -d ' ')
+if [ "$count" -eq 1 ]; then
+    label="diff: $(basename "$(cat "$repos")")"
+else
+    label="diff: 레포 ${count}개"
+fi
+
 # No --cwd: the manifest's relative pane command resolves against it.
+state="$dir/pane-${HERDR_TAB_ID:-default}"
 "$herdr" plugin pane open --plugin "$HERDR_PLUGIN_ID" --entrypoint diff --placement tab \
     --workspace "$HERDR_WORKSPACE_ID" --env "GIT_DIFF_REPOS=$repos" --focus |
-    jq -r '.result.plugin_pane.pane | "\(.pane_id) \(.tab_id)"' >"$dir/pane-${HERDR_TAB_ID:-default}"
+    jq -r '.result.plugin_pane.pane | "\(.pane_id) \(.tab_id)"' >"$state"
+read -r _ tab <"$state"
+"$herdr" tab rename "$tab" "$label" >/dev/null

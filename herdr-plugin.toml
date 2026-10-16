@@ -13,5 +13,5 @@ command = ["sh", "scripts/toggle.sh"]
 [[panes]]
 id = "diff"
 title = "Git Diff"
-placement = "split"
+placement = "tab"
 command = ["sh", "scripts/diff-pane.sh"]
