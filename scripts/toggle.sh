@@ -65,3 +65,5 @@ state="$dir/pane-${HERDR_TAB_ID:-default}"
     jq -r '.result.plugin_pane.pane | "\(.pane_id) \(.tab_id)"' >"$state"
 read -r _ tab <"$state"
 "$herdr" tab rename "$tab" "$label" >/dev/null
+# --focus alone did not switch the visible tab when run from a keybinding.
+"$herdr" tab focus "$tab" >/dev/null
