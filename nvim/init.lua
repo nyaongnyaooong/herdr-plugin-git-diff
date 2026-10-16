@@ -9,7 +9,12 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
-    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- colors/cursor-dark.lua mirrors the IntelliJ Cursor Dark scheme.
+    { "LazyVim/LazyVim", import = "lazyvim.plugins", opts = { colorscheme = "cursor-dark" } },
+    {
+      "nvim-treesitter/nvim-treesitter",
+      opts = { ensure_installed = { "java", "kotlin", "groovy", "sql", "dockerfile" } },
+    },
     {
       "sindrets/diffview.nvim",
       cmd = { "DiffviewOpen", "DiffviewRefresh" },
