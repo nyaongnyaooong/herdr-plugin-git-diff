@@ -1,12 +1,12 @@
 #!/bin/sh
-# Runs inside the split pane: Neovim with diffview.nvim on the pane's cwd.
+# Runs inside the split pane: LazyVim with diffview.nvim on the pane's cwd.
 set -eu
 
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-plugin_dir="$HERDR_PLUGIN_STATE_DIR/diffview.nvim"
+state="$HERDR_PLUGIN_STATE_DIR/nvim"
 
-if [ ! -d "$plugin_dir" ]; then
-    git clone --depth 1 https://github.com/sindrets/diffview.nvim "$plugin_dir"
-fi
+# nvim reads $XDG_CONFIG_HOME/nvim, i.e. this plugin's nvim/ directory.
+export XDG_CONFIG_HOME="$root"
+export XDG_DATA_HOME="$state/data" XDG_STATE_HOME="$state/state" XDG_CACHE_HOME="$state/cache"
 
-exec nvim -u "$root/nvim/init.lua" -c DiffviewOpen
+exec nvim -c DiffviewOpen

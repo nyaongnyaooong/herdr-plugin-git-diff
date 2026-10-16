@@ -2,7 +2,7 @@ id = "git-diff"
 name = "Git Diff"
 version = "0.1.0"
 min_herdr_version = "0.9.0"
-description = "Toggles a right-hand Neovim (diffview) pane showing the git diff of the focused pane's repository."
+description = "Toggles a right-hand LazyVim (diffview) pane showing the git diff of the focused pane's repository."
 platforms = ["linux", "macos"]
 
 [[actions]]
