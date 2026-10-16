@@ -23,4 +23,4 @@ command = "git-diff.toggle"
 description = "git diff pane"
 ```
 
-Press it again to close the pane. `q` inside the pane quits nvim.
+The diff opens as a right split taking 3/4 of the width (Claude pane 1 : diff 3). If the tab is already split left/right, it opens in a new tab instead. Press it again, from the original pane or from inside the diff, to close the pane or the diff tab. `q` inside the pane quits nvim.
