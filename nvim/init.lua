@@ -21,6 +21,22 @@ require("lazy").setup({
   change_detection = { notify = false },
 })
 
+-- toggle.sh writes the repos to show into $GIT_DIFF_REPOS; one diffview tab per repo.
+vim.api.nvim_create_autocmd("VimEnter", {
+  once = true,
+  callback = function()
+    local file = vim.env.GIT_DIFF_REPOS
+    if not file or vim.fn.filereadable(file) == 0 then return end
+    for _, repo in ipairs(vim.fn.readfile(file)) do
+      -- Lua API, not :DiffviewOpen, so paths with spaces stay one argument.
+      require("diffview").open({ "-C" .. repo })
+    end
+    -- Drop the empty startup tab, keep the first repo in front.
+    if #vim.api.nvim_list_tabpages() > 1 then vim.cmd("1tabclose") end
+    vim.cmd("tabfirst")
+  end,
+})
+
 -- Claude edits files from outside nvim, so poll for new changes.
 -- shortcut: fixed 3s poll, switch to a git/fs watcher if it feels heavy.
 vim.uv.new_timer():start(3000, 3000, vim.schedule_wrap(function()

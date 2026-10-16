@@ -1,6 +1,6 @@
 # Git Diff
 
-Toggles a right-hand Neovim pane that shows the git diff (via diffview.nvim) of the repository the focused pane is in. Meant for watching what Claude Code changes. Outside a git repository it only shows a notification.
+Toggles a right-hand Neovim pane that shows the git diff (via diffview.nvim) of the repository the focused pane is in. Meant for watching what Claude Code changes. When the focused pane is in a parent folder that holds several repositories (not itself a repository), it looks up to two levels down and opens one diffview tab per repository with uncommitted changes (`gt` / `gT` to switch). If none have changes, it only shows a notification.
 
 ## Requirements
 
