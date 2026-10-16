@@ -1,0 +1,17 @@
+id = "git-diff"
+name = "Git Diff"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Toggles a right-hand Neovim (diffview) pane showing the git diff of the focused pane's repository."
+platforms = ["linux", "macos"]
+
+[[actions]]
+id = "toggle"
+title = "Toggle git diff pane"
+command = ["sh", "scripts/toggle.sh"]
+
+[[panes]]
+id = "diff"
+title = "Git Diff"
+placement = "split"
+command = ["sh", "scripts/diff-pane.sh"]
