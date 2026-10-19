@@ -14,6 +14,16 @@ if vim.fn.filereadable(lockfile) == 0 then
   vim.fn.mkdir(vim.fn.fnamemodify(lockfile, ":h"), "p")
   vim.fn.writefile(vim.fn.readfile(vim.fn.stdpath("config") .. "/lazy-lock.json"), lockfile)
 end
+-- The bundled lock can come from a newer Mac Neovim. Match LazyVim's
+-- compatibility pin on stable Neovim 0.11 (Ubuntu's packaged version).
+if vim.fn.has("nvim-0.12") == 0 then
+  local pins = vim.json.decode(table.concat(vim.fn.readfile(lockfile), "\n"))
+  local compatible = "7caec274fd19c12b55902a5b795100d21531391f"
+  if pins["nvim-treesitter"] and pins["nvim-treesitter"].commit ~= compatible then
+    pins["nvim-treesitter"].commit = compatible
+    vim.fn.writefile({ vim.json.encode(pins) }, lockfile)
+  end
+end
 
 require("lazy").setup({
   lockfile = lockfile,
