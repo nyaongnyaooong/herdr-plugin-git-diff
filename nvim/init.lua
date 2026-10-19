@@ -27,6 +27,8 @@ end
 
 require("lazy").setup({
   lockfile = lockfile,
+  -- Encoded Lua cache filenames can exceed Windows MAX_PATH in plugin state.
+  performance = { cache = { enabled = vim.fn.has("win32") == 0 } },
   spec = {
     -- colors/cursor-dark.lua mirrors the IntelliJ Cursor Dark scheme.
     { "LazyVim/LazyVim", import = "lazyvim.plugins", opts = { colorscheme = "cursor-dark" } },

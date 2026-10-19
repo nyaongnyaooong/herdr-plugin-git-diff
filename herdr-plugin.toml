@@ -3,15 +3,30 @@ name = "Git Diff"
 version = "0.1.0"
 min_herdr_version = "0.9.0"
 description = "Toggles a LazyVim (diffview) tab showing the git diff of the focused pane's repository."
-platforms = ["linux", "macos"]
+platforms = ["linux", "macos", "windows"]
 
 [[actions]]
 id = "toggle"
 title = "Toggle git diff tab"
 command = ["sh", "scripts/toggle.sh"]
+platforms = ["linux", "macos"]
 
 [[panes]]
 id = "diff"
 title = "Git Diff"
 placement = "tab"
 command = ["sh", "scripts/diff-pane.sh"]
+platforms = ["linux", "macos"]
+
+[[actions]]
+id = "toggle-windows"
+title = "Toggle git diff tab"
+command = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/run-windows.ps1", "toggle"]
+platforms = ["windows"]
+
+[[panes]]
+id = "diff-windows"
+title = "Git Diff"
+placement = "tab"
+command = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/run-windows.ps1", "diff"]
+platforms = ["windows"]

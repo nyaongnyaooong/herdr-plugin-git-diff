@@ -10,6 +10,12 @@ The colorscheme (`nvim/colors/cursor-dark.lua`) mirrors IntelliJ's Cursor Dark s
 
 ## Install
 
+### Windows
+
+Windows uses native Python/PowerShell entrypoints, with no Bash or jq requirement. Install Python 3.9+, Neovim 0.11.2+, Git, a C compiler and the Tree-sitter CLI. The launcher also detects Neovim under `%LOCALAPPDATA%\herdr\tools\nvim-win64\bin`, Tree-sitter under `%LOCALAPPDATA%\herdr\tools`, and GCC under `C:\QMK_MSYS\ucrt64\bin`. Set `HERDR_NVIM` or add tools to PATH for other locations. Python can be selected with `HERDR_PYTHON`.
+
+Bind `prefix+d` to `git-diff.toggle-windows` on Windows. Neovim state and dependency lockfiles stay outside the plugin checkout. Run `python scripts/test_windows.py` to test repository discovery and tab toggling without touching live panes.
+
 ```sh
 herdr plugin link /path/to/herdr-plugin-git-diff
 herdr server reload-config
