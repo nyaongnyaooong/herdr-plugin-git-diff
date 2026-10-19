@@ -7,7 +7,16 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Lazy writes its lockfile at startup. Keep the checkout clean and seed each
+-- machine's state from the repository's known dependency versions.
+local lockfile = vim.fn.stdpath("state") .. "/lazy-lock.json"
+if vim.fn.filereadable(lockfile) == 0 then
+  vim.fn.mkdir(vim.fn.fnamemodify(lockfile, ":h"), "p")
+  vim.fn.writefile(vim.fn.readfile(vim.fn.stdpath("config") .. "/lazy-lock.json"), lockfile)
+end
+
 require("lazy").setup({
+  lockfile = lockfile,
   spec = {
     -- colors/cursor-dark.lua mirrors the IntelliJ Cursor Dark scheme.
     { "LazyVim/LazyVim", import = "lazyvim.plugins", opts = { colorscheme = "cursor-dark" } },

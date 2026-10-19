@@ -4,7 +4,7 @@ Toggles a LazyVim tab that shows the git diff (via diffview.nvim) of the reposit
 
 ## Requirements
 
-`nvim` (0.10+), `git`, `jq`, a C compiler (treesitter parsers). LazyVim, diffview.nvim and the parsers are installed into the plugin state directory on first open, which takes a while and needs network; the user's own nvim config and data are not used.
+`nvim` (0.11.2+), `git`, `jq`, `curl`, `unzip`, a C compiler and the `tree-sitter` CLI (treesitter parsers). On Ubuntu 26.04: `sudo apt install neovim git jq curl unzip build-essential tree-sitter-cli ripgrep fd-find`. LazyVim, diffview.nvim and the parsers are installed into the plugin state directory on first open, which takes a while and needs network; the user's own nvim config and data are not used. The bundled dependency lockfile seeds a per-machine lockfile in the plugin state directory, so opening the viewer does not modify the plugin checkout.
 
 The colorscheme (`nvim/colors/cursor-dark.lua`) mirrors IntelliJ's Cursor Dark scheme with its Java/Kotlin overrides, on a `#151515` background. Java, Kotlin, Groovy, SQL and Dockerfile parsers are added for highlighting.
 
